@@ -27,6 +27,7 @@ frameCounter = 0
 name = ""
 threatCounter = 0
 notificationSent = False
+restartVideo = True
 
 # Video input object
 cap = cv2.VideoCapture(0)
@@ -50,7 +51,7 @@ spinner = spinning_cursor()
 
 
 def faceReg():
-    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent, spinner, frameCounter
+    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent, spinner, frameCounter, restartVideo
     # Find all people and datasets for each person
     os.chdir("../")
     time.sleep(2)
@@ -84,9 +85,12 @@ def faceReg():
 
     # Video setup
     fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-    out = cv2.VideoWriter('output.avi', fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
 
     while True:
+        if restartVideo:
+            out = cv2.VideoWriter('output.avi', fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
+            restartVideo = False
+
         # Get video input frames
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -158,6 +162,11 @@ def faceReg():
                 # Send twilio message
                 notifications.sendMsg("SecAI notification: Threat detected!")
                 notificationSent = True
+
+                out.release()
+                upload_file_videoname = datetime.datetime.now().strftime("%m-%d-%y-%H-%M-%S")
+                uploadfile.upload_video(upload_file_videoname + ".avi")
+                restartVideo = True
         elif len(weights) == 0 and personDetected:
             frameCounter += 1
             if frameCounter >= 10:
@@ -178,8 +187,6 @@ def faceReg():
     # Kill video
     cap.release()
     out.release()
-    upload_file_videoname = datetime.datetime.now().strftime("%m-%d-%y-%H-%M-%S")
-    uploadfile.upload_video(upload_file_videoname + ".avi")
     cv2.destroyAllWindows()
 
 
