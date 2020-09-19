@@ -7,6 +7,7 @@ decorator==4.4.2
 dlib==19.21.0
 face-recognition==1.3.0
 face-recognition-models==0.3.0
+Flask==1.1.2
 google-api-core==1.22.2
 google-api-python-client==1.12.1
 google-auth==1.21.2
@@ -16,6 +17,10 @@ httplib2==0.18.1
 idna==2.10
 imageio==2.9.0
 imageio-ffmpeg==0.4.2
+imutils==0.5.3
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
 moviepy==1.0.3
 numpy==1.19.2
 oauth2client==4.1.3
@@ -36,3 +41,4 @@ tqdm==4.49.0
 twilio==6.45.2
 uritemplate==3.0.1
 urllib3==1.25.10
+Werkzeug==1.0.1
