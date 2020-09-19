@@ -2,29 +2,66 @@
 import face_recognition
 import numpy as np
 import cv2
+import time
+import os
 
 # Create some variables
 face_locations = []
 face_encodings = []
 face_names = []
 process_frame = True
+datasets = []
 
 # Video input object
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Load samples
-my_image = face_recognition.load_image_file("me.jpg")
+"""
+my_image = face_recognition.load_image_file("me0.jpg")
 encoded_image = face_recognition.face_encodings(my_image)[0]
 
+mom_image = face_recognition.load_image_file("mom0.jpg")
+encoded_image2 = face_recognition.face_encodings(mom_image)[0]
+"""
+# Import all data and images
+"""
+try:
+    i = 0
+    while True:
+        my_image = face_recognition.load_image_file("me"+str(i)+".jpg")
+        datasets.append(face_recognition.face_encodings(my_image)[0])
+        i+=1
+except:
+    print("Found all data images!")
+"""
+        
+    
 # Array of knowns
-known_faces = [
-    encoded_image,
-]
-known_names = [
-    "matthew",
-]
+known_faces = []
+known_names = []
+
+# Find all people and datasets for each person
+for filename in os.listdir("assets"):
+    images = []
+    for image in os.listdir(f"assets/{filename}"):
+        if image.lower().endswith(".jpg") or image.lower().endswith(".png"):
+            my_image = face_recognition.load_image_file("assets/"+str(filename)+"/"+image)
+            print("assets/"+str(filename)+"/"+image)
+            try:
+                datasets.append(face_recognition.face_encodings(my_image)[0])
+            except:
+                print("For image, "+my_image+", could not find face... Rerun after replacing image")
+                os.remove("assets/"+str(filename)+"/"+image)
+                continue
+            known_names.append(str(filename))
+
+# Add all images to known lists
+
+for data in datasets:
+    known_faces.append(data)
 
 while(True) :
+    time.sleep(0.05)
     # Get video input frames
     ret, frame = cap.read()
     #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
