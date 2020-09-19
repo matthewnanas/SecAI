@@ -1,17 +1,19 @@
 # Import things and stuff
-import face_recognition
-import numpy as np
-import cv2
-import os
 import datetime
-import uploadfile  # Pycharm gives error but call works fine.
-from flask import Response
-from flask import Flask
-from flask import render_template
-import threading
-import notifications
-import time
+import json
+import os
 import sys
+import threading
+import time
+
+import cv2
+import face_recognition
+import notifications
+import numpy as np
+import uploadfile  # Pycharm gives error but call works fine.
+from flask import Flask
+from flask import Response, request
+from flask import render_template
 
 # Create some variables
 face_locations = []
@@ -57,7 +59,7 @@ def faceReg():
     time.sleep(2)
     print("Loading images", end=" ")
     for filename in os.listdir("assets"):
-        if filename == "numbers.txt":
+        if filename == "numbers.json":
             continue
         images = []
         for image in os.listdir(f"assets/{filename}"):
@@ -103,8 +105,6 @@ def faceReg():
             # draw contours
             cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
-        # Write the flipped frame
-        out.write(frame)
 
         # Compress frames
         compressed = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -145,6 +145,9 @@ def faceReg():
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
+        # Write the flipped frame
+        out.write(frame)
+
         if len(weights) != 0:
             print('Human detected!')
             frameCounter = 0
@@ -155,6 +158,7 @@ def faceReg():
                 threatCounter += 1
                 pass
             else:
+                threatCounter = 0
                 print("Known person found!")
 
             if threatCounter >= 10 and not notificationSent:
@@ -218,6 +222,30 @@ def video_feed():
     # type (mime type)
     return Response(processFrames(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/numbers", methods=["GET", "POST"])
+def format_numbers():
+    error = ''
+
+    try:
+        if request.method == "POST":
+            numbers = request.form["Numbers"].split(",")
+
+            os.chdir('../')
+            with open("assets/numbers.json", "w+") as number_file:
+                json_file = {
+                    "Numbers": numbers
+                }
+                number_file.write(json.dumps(json_file))
+                number_file.close()
+            os.chdir("./nodes")
+            return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+        else:
+            return json.dumps({'success': False}), 403, {'ContentType': 'application/json'}
+    except Exception as e:
+        print(e)
+        return json.dumps({'success': False}), 500, {'ContentType': 'application/json'}
 
 
 if __name__ == '__main__':
