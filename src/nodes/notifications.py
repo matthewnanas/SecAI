@@ -1,6 +1,7 @@
-import twilio.rest
-import os
 import json
+import os
+
+import twilio.rest
 
 accountsid = "AC9e4a91e0e6865a7d8c5534766f11d532"
 authtoken = "05d27a08354de3223e2b9baef869ce43"
@@ -19,6 +20,7 @@ os.chdir('../')
 with open('assets/numbers.json') as f:
     numbers = json.load(f)
     numbers = numbers['Numbers']
+os.chdir("./nodes")
 
 
 def sendMsg(msg):
@@ -26,9 +28,8 @@ def sendMsg(msg):
     for number in numbers:
         client.messages.create(body=msg, from_="+13017195667", to=number)
 
+
 def makeCall(num):
     global numbers
     for number in numbers:
         client.calls.create(to=number, from_="+13017195667", url=cases[num])
-
-

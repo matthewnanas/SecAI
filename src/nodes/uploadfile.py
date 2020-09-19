@@ -1,8 +1,9 @@
-from pydrive.drive import GoogleDrive
-from pydrive.auth import GoogleAuth
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-from moviepy.video.io.VideoFileClip import VideoFileClip
 import os
+
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 gauth = GoogleAuth()
 
