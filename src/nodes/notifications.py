@@ -8,4 +8,6 @@ client = twilio.rest.Client(accountsid, authtoken)
 def sendMsg(msg, number):
     client.messages.create(body=msg, from_="+13017195667", to=number)
 
-sendMsg("Hello, test", "3017955455")
+
+if __name__ == "__main__":
+    sendMsg("Hello, test", "3017955455")
