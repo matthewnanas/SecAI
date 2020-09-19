@@ -8,6 +8,7 @@ client = twilio.rest.Client(accountsid, authtoken)
 os.chdir('../')
 with open('assets/numbers.txt', 'r') as f:
     numbers = f.readlines()
+os.chdir('./nodes')
 
 def sendMsg(msg):
     global numbers

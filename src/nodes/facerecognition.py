@@ -9,6 +9,7 @@ from flask import Response
 from flask import Flask
 from flask import render_template
 import threading
+import notifications
 
 # Create some variables
 face_locations = []
@@ -19,36 +20,25 @@ datasets = []
 app = Flask(__name__)
 processedFrame = None
 lock = threading.Lock()
+personDetected = False
+frameCounter = 0
+name = ""
+threatCounter = 0
+notificationSent = False
 
 # Video input object
 cap = cv2.VideoCapture(0)
 
-# Load samples
-"""
-my_image = face_recognition.load_image_file("me0.jpg")
-encoded_image = face_recognition.face_encodings(my_image)[0]
-
-mom_image = face_recognition.load_image_file("mom0.jpg")
-encoded_image2 = face_recognition.face_encodings(mom_image)[0]
-"""
-# Import all data and images
-"""
-try:
-    i = 0
-    while True:
-        my_image = face_recognition.load_image_file("me"+str(i)+".jpg")
-        datasets.append(face_recognition.face_encodings(my_image)[0])
-        i+=1
-except:
-    print("Found all data images!")
-"""
+# Initialize human detection
+hog = cv2.HOGDescriptor()
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 # Array of knowns
 known_faces = []
 known_names = []
 
 def faceReg():
-    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names
+    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent
     # Find all people and datasets for each person
     os.chdir("../")
     for filename in os.listdir("assets"):
@@ -80,7 +70,15 @@ def faceReg():
     while True:
         # Get video input frames
         ret, frame = cap.read()
-        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Create contours for humans
+        boxes, weights = hog.detectMultiScale(frame, winStride=(4, 4), padding=(4, 4), scale=1.05 )
+        boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
+
+        for (xA, yA, xB, yB) in boxes:
+            # draw contours
+            cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
         # Write the flipped frame
         out.write(frame)
@@ -120,9 +118,33 @@ def faceReg():
             left *= 4
 
             # Box face
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 100), cv2.FILLED)
+            cv2.rectangle(frame, (left, bottom - 45), (right, bottom), (0, 0, 100), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+        if len(weights) != 0:
+            print('Human detected!')
+            frameCounter = 0
+            personDetected = True
+            if name == "Unknown":
+                threatCounter += 1
+            elif name == "":
+                threatCounter += 1
+                pass
+            else:
+                print("Known person found!")
+
+            if threatCounter >= 10 and not notificationSent:
+                print("Threat detected")
+                # Send twilio message
+                notifications.sendMsg("SecAI notification: Threat detected!")
+                notificationSent = True
+        elif len(weights) == 0 and personDetected:
+            frameCounter += 1
+            if frameCounter >= 10:
+                print("Person Left")
+                personDetected = False
+                notificationSent = False
 
         cv2.imshow('Face detection', frame)
 
