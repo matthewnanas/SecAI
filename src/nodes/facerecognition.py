@@ -49,7 +49,7 @@ for filename in os.listdir("assets"):
             try:
                 datasets.append(face_recognition.face_encodings(my_image)[0])
             except:
-                print("For image, " + str(my_image) + ", could not find face... Rerun after replacing image")
+                print("For image, " + str(image) + ", could not find face... Rerun after replacing image")
                 os.remove("assets/" + str(filename) + "/" + image)
                 continue
             known_names.append(str(filename))
@@ -60,7 +60,6 @@ for data in datasets:
     known_faces.append(data)
 
 while True:
-    time.sleep(0.05)
     # Get video input frames
     ret, frame = cap.read()
     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
