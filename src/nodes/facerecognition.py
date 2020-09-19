@@ -177,6 +177,7 @@ def faceReg():
                 print("Person Left")
                 personDetected = False
                 notificationSent = False
+                name = ""
 
         cv2.imshow('Face detection', frame)
 
