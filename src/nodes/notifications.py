@@ -5,8 +5,9 @@ authtoken = "05d27a08354de3223e2b9baef869ce43"
 client = twilio.rest.Client(accountsid, authtoken)
 
 
-def sendMsg(msg, number):
-    client.messages.create(body=msg, from_="+13017195667", to=number)
+def sendMsg(msg, numbers):
+    for x in numbers:
+        client.messages.create(body=msg, from_="+13017195667", to=x)
 
 
 if __name__ == "__main__":
