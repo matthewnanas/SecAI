@@ -41,6 +41,7 @@ known_faces = []
 known_names = []
 
 # Find all people and datasets for each person
+os.chdir("../")
 for filename in os.listdir("assets"):
     images = []
     for image in os.listdir(f"assets/{filename}"):
@@ -54,6 +55,7 @@ for filename in os.listdir("assets"):
                 os.remove("assets/" + str(filename) + "/" + image)
                 continue
             known_names.append(str(filename))
+os.chdir("./nodes") # store cwd before changing?
 
 # Add all images to known lists
 
