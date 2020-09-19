@@ -43,6 +43,8 @@ known_names = []
 # Find all people and datasets for each person
 os.chdir("../")
 for filename in os.listdir("assets"):
+    if filename == "numbers.txt":
+        continue
     images = []
     for image in os.listdir(f"assets/{filename}"):
         if image.lower().endswith(".jpg") or image.lower().endswith(".png"):
