@@ -13,7 +13,7 @@ process_frame = True
 datasets = []
 
 # Video input object
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 # Load samples
 """
@@ -34,8 +34,7 @@ try:
 except:
     print("Found all data images!")
 """
-        
-    
+
 # Array of knowns
 known_faces = []
 known_names = []
@@ -45,13 +44,13 @@ for filename in os.listdir("assets"):
     images = []
     for image in os.listdir(f"assets/{filename}"):
         if image.lower().endswith(".jpg") or image.lower().endswith(".png"):
-            my_image = face_recognition.load_image_file("assets/"+str(filename)+"/"+image)
-            print("assets/"+str(filename)+"/"+image)
+            my_image = face_recognition.load_image_file("assets/" + str(filename) + "/" + image)
+            print("assets/" + str(filename) + "/" + image)
             try:
                 datasets.append(face_recognition.face_encodings(my_image)[0])
             except:
-                print("For image, "+my_image+", could not find face... Rerun after replacing image")
-                os.remove("assets/"+str(filename)+"/"+image)
+                print("For image, " + my_image + ", could not find face... Rerun after replacing image")
+                os.remove("assets/" + str(filename) + "/" + image)
                 continue
             known_names.append(str(filename))
 
@@ -60,13 +59,13 @@ for filename in os.listdir("assets"):
 for data in datasets:
     known_faces.append(data)
 
-while(True) :
+while True:
     time.sleep(0.05)
     # Get video input frames
     ret, frame = cap.read()
-    #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    #Compress frames
+    # Compress frames
     compressed = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
     # Convert frames to RGB from HSV
@@ -101,7 +100,7 @@ while(True) :
         left *= 4
 
         # Box face
-        cv2.rectangle(frame, (left, bottom - 50), (right, bottom), (0, 0, 255), cv2.FILLED)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 100), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
