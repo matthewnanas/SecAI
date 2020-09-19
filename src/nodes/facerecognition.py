@@ -2,8 +2,9 @@
 import face_recognition
 import numpy as np
 import cv2
-import time
 import os
+import datetime
+import uploadfile # Pycharm gives error but call works fine.
 
 # Create some variables
 face_locations = []
@@ -59,10 +60,17 @@ for filename in os.listdir("assets"):
 for data in datasets:
     known_faces.append(data)
 
+# Video setup
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+out = cv2.VideoWriter('output.avi', fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
+
 while True:
     # Get video input frames
     ret, frame = cap.read()
     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Write the flipped frame
+    out.write(frame)
 
     # Compress frames
     compressed = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -112,4 +120,7 @@ while True:
 
 # Kill video
 cap.release()
+out.release()
+upload_file_videoname = datetime.datetime.now().strftime("%m-%d-%y-%H-%M-%S")
+uploadfile.upload_video(upload_file_videoname + ".avi")
 cv2.destroyAllWindows()

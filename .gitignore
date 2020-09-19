@@ -1,3 +1,7 @@
+# Custom
+/src/nodes/output.avi
+/src/nodes/output_trim.avi
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
