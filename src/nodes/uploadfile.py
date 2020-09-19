@@ -19,7 +19,17 @@ def upload_video(title):
                            targetname="output_trim.avi")
 
     path = "./output.avi"
-    f = drive.CreateFile({'title': str(title), 'parents': [{'id': "17suZYUdueAOxZ7Cww1O36y9P7xU8uIgn"}]})
+    i = 0
+    fileList = drive.ListFile({'q': "'root' in parents and trashed=false"}).GetList()
+    print("\nSelect the number corresponding to the folder!")
+    for file in fileList:
+        print(f"{i}. {file['title']}")
+        i += 1
+
+    iterator = int(input())
+    drive_id = fileList[iterator]["id"]
+
+    f = drive.CreateFile({'title': str(title), 'parents': [{'id': str(drive_id)}]})
     f.SetContentFile(os.path.join(path))
     f.Upload()
     f = None
