@@ -49,7 +49,7 @@ for filename in os.listdir("assets"):
             try:
                 datasets.append(face_recognition.face_encodings(my_image)[0])
             except:
-                print("For image, " + my_image + ", could not find face... Rerun after replacing image")
+                print("For image, " + str(my_image) + ", could not find face... Rerun after replacing image")
                 os.remove("assets/" + str(filename) + "/" + image)
                 continue
             known_names.append(str(filename))
