@@ -18,16 +18,13 @@ cases = [
 os.chdir('../')
 with open('assets/numbers.json') as f:
     numbers = json.load(f)
-
-print(numbers['Numbers'])
-numbers = numbers['Numbers']
+    numbers = numbers['Numbers']
 
 
 def sendMsg(msg):
     global numbers
     for number in numbers:
-        print(number)
-        client.messages.create(body=msg, from_="+13017195667", to=number.strip('\n'))
+        client.messages.create(body=msg, from_="+13017195667", to=number)
 
 def makeCall(num):
     global numbers
