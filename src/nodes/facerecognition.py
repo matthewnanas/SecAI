@@ -4,12 +4,14 @@ import numpy as np
 import cv2
 import os
 import datetime
-import uploadfile # Pycharm gives error but call works fine.
+import uploadfile  # Pycharm gives error but call works fine.
 from flask import Response
 from flask import Flask
 from flask import render_template
 import threading
 import notifications
+import time
+import sys
 
 # Create some variables
 face_locations = []
@@ -37,10 +39,22 @@ hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 known_faces = []
 known_names = []
 
+
+def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            yield cursor
+
+
+spinner = spinning_cursor()
+
+
 def faceReg():
-    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent
+    global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent, spinner, frameCounter
     # Find all people and datasets for each person
     os.chdir("../")
+    time.sleep(2)
+    print("Loading images", end=" ")
     for filename in os.listdir("assets"):
         if filename == "numbers.txt":
             continue
@@ -48,15 +62,20 @@ def faceReg():
         for image in os.listdir(f"assets/{filename}"):
             if image.lower().endswith(".jpg") or image.lower().endswith(".png"):
                 my_image = face_recognition.load_image_file("assets/" + str(filename) + "/" + image)
-                print("assets/" + str(filename) + "/" + image)
+                # print("assets/" + str(filename) + "/" + image)
                 try:
                     datasets.append(face_recognition.face_encodings(my_image)[0])
+
+                    sys.stdout.write(next(spinner))
+                    sys.stdout.flush()
+                    time.sleep(0.1)
+                    sys.stdout.write('\b')
                 except:
                     print("For image, " + str(image) + ", could not find face... Image deleted.")
                     os.remove("assets/" + str(filename) + "/" + image)
                     continue
                 known_names.append(str(filename))
-    os.chdir("./nodes") # store cwd before changing?
+    os.chdir("./nodes")  # store cwd before changing?
 
     # Add all images to known lists
 
@@ -73,7 +92,7 @@ def faceReg():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Create contours for humans
-        boxes, weights = hog.detectMultiScale(frame, winStride=(4, 4), padding=(4, 4), scale=1.05 )
+        boxes, weights = hog.detectMultiScale(frame, winStride=(4, 4), padding=(4, 4), scale=1.05)
         boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
 
         for (xA, yA, xB, yB) in boxes:
@@ -163,32 +182,36 @@ def faceReg():
     uploadfile.upload_video(upload_file_videoname + ".avi")
     cv2.destroyAllWindows()
 
+
 def processFrames():
     global processedFrame, lock
     while True:
         with lock:
             if processedFrame is None:
                 continue
-            
+
             (flag, encodedImage) = cv2.imencode(".jpg", processedFrame)
-            
+
             if not flag:
                 continue
 
-        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
-			bytearray(encodedImage) + b'\r\n')
+        yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+               bytearray(encodedImage) + b'\r\n')
+
 
 @app.route("/")
 def index():
     # return the rendered template
     return render_template("index.html")
 
+
 @app.route("/video_feed")
 def video_feed():
-	# return the response generated along with the specific media
-	# type (mime type)
-	return Response(processFrames(),
-		mimetype = "multipart/x-mixed-replace; boundary=frame")
+    # return the response generated along with the specific media
+    # type (mime type)
+    return Response(processFrames(),
+                    mimetype="multipart/x-mixed-replace; boundary=frame")
+
 
 if __name__ == '__main__':
     recognize = threading.Thread(target=faceReg)
@@ -197,4 +220,4 @@ if __name__ == '__main__':
 
     # start the flask app
     app.run(host="0.0.0.0", port="1337", debug=True,
-        threaded=True, use_reloader=False)
+            threaded=True, use_reloader=False)
