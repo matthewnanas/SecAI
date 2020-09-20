@@ -13,6 +13,7 @@ cases = [
     "https://handler.twilio.com/twiml/EHa9ac8807f1c3f122d959e5b521de2414", # Unknown person case
     "https://handler.twilio.com/twiml/EH034b64c120e69bfcd544f0c572c9d359", # Package delivery case
 ]
+
 numbers = None
 
 def refreshNumbers():
