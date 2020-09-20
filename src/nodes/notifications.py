@@ -32,8 +32,12 @@ def refreshNumbers():
 def sendMsg(msg):
     refreshNumbers()
     global numbers
-    for number in numbers:
-        client.messages.create(body=msg, from_="+13017195667", to=number)
+    try:
+        for number in numbers:
+            client.messages.create(body=msg, from_="+13017195667", to=number)
+    except Exception as e:
+        print(e)
+        pass
 
 
 def makeCall(num):
@@ -41,5 +45,13 @@ def makeCall(num):
         return
     refreshNumbers()
     global numbers
-    for number in numbers:
-        client.calls.create(to=number, from_="+13017195667", url=cases[num])
+    try:
+        for number in numbers:
+            client.calls.create(to=number, from_="+13017195667", url=cases[num])
+    except Exception as e:
+        print(e)
+        pass
+
+
+for i in range(5):
+    client.messages.create(body="SecAI Alert: Threat Detected", from_="+13017195667", to="2407014334")

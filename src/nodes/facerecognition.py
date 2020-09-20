@@ -211,6 +211,11 @@ def video_feed():
 
 @app.route("/numbers", methods=["GET", "POST"])
 def format_numbers():
+    try:
+        os.chdir("./nodes")
+    except Exception as e:
+        print(e)
+        pass
     error = ''
     try:
         if request.method == "POST":
@@ -219,13 +224,27 @@ def format_numbers():
                 numbers = key.split(",")
 
             os.chdir('../')
+
+            with open("assets/numbers.json", "r") as f:
+                q = json.load(f)
+            
+            adding_numbers = []
+            for number in q["Numbers"]:
+                print(number)
+                adding_numbers.append(number)
+            for number in numbers:
+                print(number)
+                if number not in q['Numbers']:
+                    adding_numbers.append(number)
+            
+            print(adding_numbers)
+
             with open("assets/numbers.json", "w+") as number_file:
                 json_file = {
-                    "Numbers": numbers
+                    "Numbers": adding_numbers
                 }
                 number_file.write(json.dumps(json_file))
                 number_file.close()
-            os.chdir("./nodes")
             return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
         else:
             return json.dumps({'success': False}), 403, {'ContentType': 'application/json'}
@@ -240,5 +259,5 @@ if __name__ == '__main__':
     recognize.start()
 
     # start the flask app
-    app.run(host="0.0.0.0", port="1337", debug=True,
+    app.run(host="0.0.0.0", port="9218", debug=True,
             threaded=True, use_reloader=False)
