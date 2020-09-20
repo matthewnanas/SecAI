@@ -52,6 +52,3 @@ def makeCall(num):
         print(e)
         pass
 
-
-for i in range(5):
-    client.messages.create(body="SecAI Alert: Threat Detected", from_="+13017195667", to="2407014334")
