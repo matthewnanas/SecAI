@@ -12,18 +12,20 @@ cases = [
     "https://handler.twilio.com/twiml/EH37749524b98862ba08a75c2370b1a9f9", # Armed person case
     "https://handler.twilio.com/twiml/EHa9ac8807f1c3f122d959e5b521de2414", # Unknown person case
     "https://handler.twilio.com/twiml/EH034b64c120e69bfcd544f0c572c9d359", # Package delivery case
-    ""
-    
 ]
+numbers = None
 
-os.chdir('../')
-with open('assets/numbers.json') as f:
-    numbers = json.load(f)
-    numbers = numbers['Numbers']
-os.chdir("./nodes")
+def refreshNumbers():
+    global numbers
+    os.chdir('../')
+    with open('assets/numbers.json') as f:
+        numbers = json.load(f)
+        numbers = numbers['Numbers']
+    os.chdir("./nodes")
 
 
 def sendMsg(msg):
+    refreshNumbers()
     global numbers
     for number in numbers:
         client.messages.create(body=msg, from_="+13017195667", to=number)
@@ -32,6 +34,7 @@ def sendMsg(msg):
 def makeCall(num):
     if num not in range(0, 3):
         return
+    refreshNumbers()
     global numbers
     for number in numbers:
         client.calls.create(to=number, from_="+13017195667", url=cases[num])
