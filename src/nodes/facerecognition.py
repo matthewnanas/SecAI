@@ -231,8 +231,9 @@ def format_numbers():
 
     try:
         if request.method == "POST":
-            # print(request.form)
-            numbers = request.form["Numbers"].split(",")
+            data = request.form.to_dict()
+            for key, value in data.items():
+                numbers = key.split(",")
 
             os.chdir('../')
             with open("assets/numbers.json", "w+") as number_file:
