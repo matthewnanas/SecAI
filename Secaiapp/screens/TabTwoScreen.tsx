@@ -5,22 +5,17 @@ import { WebView } from 'react-native-webview';
 import { Text, View } from '../components/Themed';
 
 export default function TabTwoScreen() {
+  var driveurl = 'https://drive.google.com';
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recordings</Text>
       <WebView
+          automaticallyAdjustContentInsets={false}
+          source={{uri: driveurl}}
           scalesPageToFit={true}
           bounces={false}
           javaScriptEnabled
           style={{ height: 500, width: 300 }}
-          source={{
-            html: `
-            <iframe src="https://drive.google.com"
-            title="iframe Example 1" width="100%" height="100%">
-            </iframe>
-            `,
-          }}
-          automaticallyAdjustContentInsets={false}
         />
     </View>
   );
