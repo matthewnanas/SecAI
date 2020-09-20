@@ -15,14 +15,15 @@ class TabThreeSecreen extends React.Component {
   }
   updateContacts = () => {
     var numbers = this.state.numbers;
-    numbers.replace(/\n/g, ",")
+    numbers = numbers.replace(/\n/g, ",")
     //alert(numbers);
     try {
       let response = fetch(
         "http://localhost:1337/numbers",
         {
-          method: 'post',
-          body: numbers,
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+          body: numbers
         },
       )
     } catch (error) {
