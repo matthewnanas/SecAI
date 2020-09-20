@@ -30,6 +30,8 @@ def sendMsg(msg):
 
 
 def makeCall(num):
+    if num not in range(0, 3):
+        return
     global numbers
     for number in numbers:
         client.calls.create(to=number, from_="+13017195667", url=cases[num])
