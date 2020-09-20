@@ -6,7 +6,7 @@ import { Text, View } from '../components/Themed';
 
 export default function TabOneScreen() {
   // USE IP OF STREAMING DEVICE
-  var ipurl = 'http://192.168.0.141:1337/';
+  var ipurl = 'http://192.168.1.153:9218/';
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Live Feed</Text>
@@ -16,7 +16,7 @@ export default function TabOneScreen() {
           scalesPageToFit={true}
           bounces={false}
           javaScriptEnabled
-          style={{ height: 500, width: 300 }}
+          style={{ height: 1500, width: 900 }}
         />
     </View>
   );
