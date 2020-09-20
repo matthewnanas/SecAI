@@ -1,6 +1,8 @@
 # Custom
 /src/nodes/output.avi
 /src/nodes/output_trim.avi
+/src/nodes/security.json
+/src/nodes/client_secrets.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
