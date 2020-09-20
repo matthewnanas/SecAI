@@ -231,6 +231,7 @@ def format_numbers():
 
     try:
         if request.method == "POST":
+            # print(request.form)
             numbers = request.form["Numbers"].split(",")
 
             os.chdir('../')
