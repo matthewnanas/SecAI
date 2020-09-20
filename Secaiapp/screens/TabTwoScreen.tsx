@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
-//import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
 export default function TabTwoScreen() {
@@ -10,12 +9,15 @@ export default function TabTwoScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Recordings</Text>
       <WebView
+          useWebKit={true} 
+          startInLoadingState={true}
           automaticallyAdjustContentInsets={false}
           source={{uri: driveurl}}
           scalesPageToFit={true}
           bounces={false}
-          javaScriptEnabled
-          style={{ height: 500, width: 300 }}
+          javaScriptEnabled={false}
+          originWhitelist={['*']}
+          style={{ height: 500, width: 300, flex: 1 }}
         />
     </View>
   );
