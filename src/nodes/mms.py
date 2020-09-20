@@ -9,8 +9,13 @@ import random
 import datetime
 
 
-accountsid = "AC9e4a91e0e6865a7d8c5534766f11d532"
-authtoken = "05d27a08354de3223e2b9baef869ce43"
+with open("security.json") as secur:
+    security = json.loads(secur.read())
+    secur.close()
+
+accountsid = security["accountID"]
+authtoken = security["authToken"]
+
 client = twilio.rest.Client(accountsid, authtoken)
 
 app = Flask(__name__)
