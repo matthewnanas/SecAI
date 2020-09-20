@@ -5,22 +5,18 @@ import { WebView } from 'react-native-webview';
 import { Text, View } from '../components/Themed';
 
 export default function TabOneScreen() {
+  // USE IP OF STREAMING DEVICE
+  var ipurl = 'http://192.168.0.141:1337/';
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Live Feed</Text>
-      <WebView
+        <WebView
+          automaticallyAdjustContentInsets={false}
+          source={{uri: ipurl}}
           scalesPageToFit={true}
           bounces={false}
           javaScriptEnabled
           style={{ height: 500, width: 300 }}
-          source={{
-            html: `
-            <center><iframe src="http://192.1.7:1337/"
-            title="iframe Example 1" width="100%" height="100%">
-            </iframe></center>
-            `,
-          }}
-          automaticallyAdjustContentInsets={false}
         />
     </View>
   );
