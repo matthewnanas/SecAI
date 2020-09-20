@@ -1,19 +1,16 @@
 # Import things and stuff
-import datetime
-import json
-import os
-import sys
-import threading
-import time
-
-import cv2
+import uploadfile  # Pycharm gives error but call works fine.
+from flask import Flask, Response, request, render_template
 import face_recognition
 import notifications
 import numpy as np
-import uploadfile  # Pycharm gives error but call works fine.
-from flask import Flask
-from flask import Response, request
-from flask import render_template
+import threading
+import datetime
+import json
+import time
+import sys
+import cv2
+import os
 
 # Create some variables
 face_locations = []
@@ -30,6 +27,8 @@ name = ""
 threatCounter = 0
 notificationSent = False
 restartVideo = True
+known_faces = []
+known_names = []
 
 # Video input object
 cap = cv2.VideoCapture(0)
@@ -38,19 +37,12 @@ cap = cv2.VideoCapture(0)
 hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
-# Array of knowns
-known_faces = []
-known_names = []
-
-
 def spinning_cursor():
     while True:
         for cursor in '|/-\\':
             yield cursor
 
-
 spinner = spinning_cursor()
-
 
 def faceReg():
     global processedFrame, lock, face_locations, face_encodings, face_names, process_frame, datasets, known_faces, known_names, personDetected, name, threatCounter, notificationSent, spinner, frameCounter, restartVideo
@@ -65,10 +57,8 @@ def faceReg():
         for image in os.listdir(f"assets/{filename}"):
             if image.lower().endswith(".jpg") or image.lower().endswith(".png"):
                 my_image = face_recognition.load_image_file("assets/" + str(filename) + "/" + image)
-                # print("assets/" + str(filename) + "/" + image)
                 try:
                     datasets.append(face_recognition.face_encodings(my_image)[0])
-
                     sys.stdout.write(next(spinner))
                     sys.stdout.flush()
                     time.sleep(0.1)
@@ -81,7 +71,6 @@ def faceReg():
     os.chdir("./nodes")  # store cwd before changing?
 
     # Add all images to known lists
-
     for data in datasets:
         known_faces.append(data)
 
@@ -104,7 +93,6 @@ def faceReg():
         for (xA, yA, xB, yB) in boxes:
             # draw contours
             cv2.rectangle(frame, (xA, yA), (xB, yB), (0, 255, 0), 2)
-
 
         # Compress frames
         compressed = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -152,15 +140,11 @@ def faceReg():
             print('Human detected!')
             frameCounter = 0
             personDetected = True
-            if name == "Unknown":
+            if name in ["Unknown", ""]:
                 threatCounter += 1
-            elif name == "":
-                threatCounter += 1
-                pass
             else:
                 threatCounter = 0
                 print("Known person found!")
-
             if threatCounter >= 10 and not notificationSent:
                 print("Threat detected")
                 # Send twilio message
@@ -228,7 +212,6 @@ def video_feed():
 @app.route("/numbers", methods=["GET", "POST"])
 def format_numbers():
     error = ''
-
     try:
         if request.method == "POST":
             data = request.form.to_dict()
