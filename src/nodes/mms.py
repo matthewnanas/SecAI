@@ -14,9 +14,6 @@ authtoken = "05d27a08354de3223e2b9baef869ce43"
 client = twilio.rest.Client(accountsid, authtoken)
 
 app = Flask(__name__)
-myDict = {"+13017955455": "Rohit"}
-
-
 
 i = 0
 awaiting_responses = []
@@ -32,28 +29,21 @@ def sms_reply():
             i = 1
         else:
             pass
-            
-        print(request.values['MediaUrl0'])
-        print("not 0")
+
         name = request.values['MessageSid']
-        print(os.listdir())
         client.messages.create(body="Great! Who's name do you want this to go under?", from_="+13017195667", to=request.values['From'])
         awaiting_responses.append({request.values['From']: [request.values['MediaUrl0'], datetime.datetime.now()]})
         return "Done"
     except Exception as e:
         for item in awaiting_responses:
             for key, value in item.items():
-                print(value)
                 if key == request.values['From']:
                     a1 = datetime.datetime.now()
                     a2 = value[1]
-                    print(f"a2 = {a2}")
                     if ((a2-a1).total_seconds()) > 60:
-                        print("1")
                         awaiting_responses.remove({key: value})
                         return "Hello"
                     else:
-                        print("2")
                         personname = request.values['Body'].capitalize()
                         if personname not in os.listdir():
                             os.mkdir(personname)
@@ -70,6 +60,3 @@ def sms_reply():
     return "Good"
 if __name__ == "__main__":
     app.run(debug=True)
-    print("Yo")
-        
-
