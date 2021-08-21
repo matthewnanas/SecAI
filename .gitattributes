@@ -3,4 +3,4 @@
 *.json linguist-detectable=false
 
 
-*.typescript linguist-detectable=false
+*.tsx linguist-detectable=false
