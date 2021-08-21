@@ -1,5 +1,6 @@
 *.html linguist-detectable=false
 *.css linguist-detectable=false
 *.json linguist-detectable=false
-*.ts linguist-detectable=false
+
+
 *.typescript linguist-detectable=false
